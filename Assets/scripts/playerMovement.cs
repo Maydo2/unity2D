@@ -36,7 +36,7 @@ public class playerMovement : MonoBehaviour
         {
             float dir = Input.GetAxis("Horizontal");
 
-            animator.SetFloat("speed", 1);
+            animator.SetFloat("Speed", 1);
 
             if (dir > 0)
             {
@@ -51,7 +51,7 @@ public class playerMovement : MonoBehaviour
         }
         else
         {
-            animator.SetFloat("speed", 0);
+            animator.SetFloat("Speed", 0);
         }
         
 
@@ -61,10 +61,12 @@ public class playerMovement : MonoBehaviour
         {
             remainingJumps = airJumps;
             currentSpeed = speed;
+            animator.SetBool("IsJumping", false);
         }
         else
         {
             currentSpeed = currentSpeed - 1f * Time.deltaTime;
+            animator.SetBool("IsJumping", true);
         }
         if (Input.GetButtonDown("Jump"))
         {
