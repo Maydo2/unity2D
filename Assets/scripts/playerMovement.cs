@@ -12,6 +12,7 @@ public class playerMovement : MonoBehaviour
     public float jumpForce = 7f;
     public float groundCheckLenght = 1.95f;
     public int airJumps = 2;
+    public bool isOnGround;
 
     private Rigidbody2D rb2D;
     public int remainingJumps;
@@ -19,6 +20,12 @@ public class playerMovement : MonoBehaviour
     private float currentSpeed;
     public bool facesRight;
     public float fireballCooldown;
+
+    public bool hasShot;
+    private float animationCastTimer = 0.4f;
+
+    public bool didAttack;
+    private float animationAttackTimer = 0.4f;
 
     // Start is called before the first frame update
     void Start()
@@ -62,21 +69,55 @@ public class playerMovement : MonoBehaviour
             remainingJumps = airJumps;
             currentSpeed = speed;
             animator.SetBool("IsJumping", false);
+            isOnGround = true;
         }
         else
         {
             currentSpeed = currentSpeed - 1f * Time.deltaTime;
             animator.SetBool("IsJumping", true);
+            isOnGround = false;
         }
-        if (Input.GetButtonDown("Jump"))
+        if (!hasShot && !didAttack)
         {
-            Jump();
+            if (Input.GetButtonDown("Jump"))
+            {
+                Jump();
+            }
         }
 
         Debug.DrawRay(transform.position, -transform.up * groundCheckLenght, Color.black);
 
+        if (hasShot)
+        {
+            speed = 0;
+            animationCastTimer -= Time.deltaTime;
+            if (animationCastTimer <= 0)
+            {
+                animator.SetBool("IsCasting", false);
+                animationCastTimer = 0.4f;
+                speed = 10;
+                hasShot = false;
+                rb2D.constraints = RigidbodyConstraints2D.None;
+                rb2D.constraints = RigidbodyConstraints2D.FreezeRotation;
+            }
+        }
+        if (didAttack)
+        {
+            speed = 0;
+            animationAttackTimer -= Time.deltaTime;
+            if (animationAttackTimer <= 0)
+            {
+                animator.SetBool("IsAttacking", false);
+                animationAttackTimer = 0.4f;
+                speed = 10;
+                didAttack = false;
+                rb2D.constraints = RigidbodyConstraints2D.None;
+                rb2D.constraints = RigidbodyConstraints2D.FreezeRotation;
+            }
+        }
         ChangeDirection();
         Shoot();
+        Attack();
     }
 
     private void Jump()
@@ -94,6 +135,7 @@ public class playerMovement : MonoBehaviour
         if (Input.GetKey(KeyCode.A) && Input.GetKey(KeyCode.D))
         {
             currentSpeed = 0;
+            animator.SetFloat("Speed", 0);
         }
         else
         {
@@ -102,30 +144,53 @@ public class playerMovement : MonoBehaviour
         if (Input.GetKey(KeyCode.A) && facesRight == false)
         {
             transform.localScale = new Vector2(-1.5f, 1.5f);
-            
         }
         if (Input.GetKey(KeyCode.D) && facesRight == true)
         {
             transform.localScale = new Vector2(1.5f, 1.5f);
-            
         }
     }
 
     public void Shoot()
     {
-        
         if (fireballCooldown >= 0)
         {
             fireballCooldown -= Time.deltaTime;
         }
         if (Input.GetKeyDown(KeyCode.F))
         {
-            if (fireballCooldown <= 0)
+            if (fireballCooldown <= 0 && !didAttack)
             {
+                hasShot = true;
                 projectileBehaviour bullet = Instantiate(projectilePrefab, launchOffset.position, transform.rotation);
                 bullet.isFacingRight = facesRight;
                 fireballCooldown = 1f;
+                animator.SetBool("IsCasting", true);
+                rb2D.constraints = RigidbodyConstraints2D.FreezePosition;
             }
+        }
+    }
+
+    public void Attack()
+    {
+        if (Input.GetKeyDown(KeyCode.G) && !hasShot)
+        {
+            if (!isOnGround)
+            {
+                /*rb2D.AddForce();*/
+                animator.SetBool("IsAttacking", true);
+                didAttack = true;
+                rb2D.constraints = RigidbodyConstraints2D.FreezePositionX;
+                rb2D.constraints = RigidbodyConstraints2D.FreezeRotation;
+            }
+            else
+            {
+                animator.SetBool("IsAttacking", true);
+                didAttack = true;
+                rb2D.constraints = RigidbodyConstraints2D.FreezePositionX;
+                rb2D.constraints = RigidbodyConstraints2D.FreezeRotation;
+            }
+            
         }
     }
 }

@@ -7,9 +7,6 @@ public class projectileBehaviour : MonoBehaviour
     public float speed = 5f;
     public bool isFacingRight = true;
 
-    private float destroyAfterSeconds = 5;
-    private float destroyFireball;
-
     private void Update()
     {
         if (isFacingRight)
