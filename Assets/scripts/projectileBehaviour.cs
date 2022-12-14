@@ -27,7 +27,6 @@ public class projectileBehaviour : MonoBehaviour
         if (collision.gameObject.CompareTag("Player") || collision.gameObject.CompareTag("Wall"))
         {
             Destroy(this.gameObject);
-            Debug.Log(collision.gameObject);
         }
     }
 }
