@@ -22,9 +22,12 @@ public class projectileBehaviour : MonoBehaviour
 
         }
     }
-
-    private void OnCollisionEnter2D(Collision2D collision)
+    private void OnTriggerEnter2D(Collider2D collision)
     {
-        Destroy(gameObject);
+        if (collision.gameObject.CompareTag("Player") || collision.gameObject.CompareTag("Wall"))
+        {
+            Destroy(this.gameObject);
+            Debug.Log(collision.gameObject);
+        }
     }
 }

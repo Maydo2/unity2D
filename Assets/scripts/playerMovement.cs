@@ -8,10 +8,10 @@ public class playerMovement : MonoBehaviour
     public Transform launchOffset;
     public Animator animator;
 
-    public float speed = 10f;
-    public float jumpForce = 7f;
-    public float groundCheckLenght = 1.95f;
-    public int airJumps = 2;
+    public float speed = 6f;
+    public float jumpForce = 7.5f;
+    public float groundCheckLenght = 1.9f;
+    public int airJumps = 1;
     public bool isOnGround;
 
     private Rigidbody2D rb2D;
@@ -26,6 +26,8 @@ public class playerMovement : MonoBehaviour
 
     public bool didAttack;
     private float animationAttackTimer = 0.4f;
+    private bool canAttack;
+    private float downslashforce = 15;
 
     // Start is called before the first frame update
     void Start()
@@ -69,7 +71,9 @@ public class playerMovement : MonoBehaviour
             remainingJumps = airJumps;
             currentSpeed = speed;
             animator.SetBool("IsJumping", false);
+            animator.SetBool("IsAirAttacking", false);
             isOnGround = true;
+            canAttack = true;
         }
         else
         {
@@ -95,7 +99,7 @@ public class playerMovement : MonoBehaviour
             {
                 animator.SetBool("IsCasting", false);
                 animationCastTimer = 0.4f;
-                speed = 10;
+                speed = 6f;
                 hasShot = false;
                 rb2D.constraints = RigidbodyConstraints2D.None;
                 rb2D.constraints = RigidbodyConstraints2D.FreezeRotation;
@@ -109,7 +113,7 @@ public class playerMovement : MonoBehaviour
             {
                 animator.SetBool("IsAttacking", false);
                 animationAttackTimer = 0.4f;
-                speed = 10;
+                speed = 6f;
                 didAttack = false;
                 rb2D.constraints = RigidbodyConstraints2D.None;
                 rb2D.constraints = RigidbodyConstraints2D.FreezeRotation;
@@ -143,11 +147,11 @@ public class playerMovement : MonoBehaviour
         }
         if (Input.GetKey(KeyCode.A) && facesRight == false)
         {
-            transform.localScale = new Vector2(-1.5f, 1.5f);
+            transform.localScale = new Vector2(-1f, 1f);
         }
         if (Input.GetKey(KeyCode.D) && facesRight == true)
         {
-            transform.localScale = new Vector2(1.5f, 1.5f);
+            transform.localScale = new Vector2(1f, 1f);
         }
     }
 
@@ -157,7 +161,7 @@ public class playerMovement : MonoBehaviour
         {
             fireballCooldown -= Time.deltaTime;
         }
-        if (Input.GetKeyDown(KeyCode.F))
+        if (Input.GetKeyDown(KeyCode.LeftShift))
         {
             if (fireballCooldown <= 0 && !didAttack)
             {
@@ -166,24 +170,25 @@ public class playerMovement : MonoBehaviour
                 bullet.isFacingRight = facesRight;
                 fireballCooldown = 1f;
                 animator.SetBool("IsCasting", true);
-                rb2D.constraints = RigidbodyConstraints2D.FreezePosition;
+                rb2D.constraints = RigidbodyConstraints2D.FreezeAll;
             }
         }
     }
 
     public void Attack()
     {
-        if (Input.GetKeyDown(KeyCode.G) && !hasShot)
+        if (Input.GetKeyDown(KeyCode.R) && !hasShot)
         {
-            if (!isOnGround)
+            if (!isOnGround && canAttack)
             {
-                /*rb2D.AddForce();*/
-                animator.SetBool("IsAttacking", true);
+                rb2D.AddForce(transform.up * -downslashforce, ForceMode2D.Impulse);
+                animator.SetBool("IsAirAttacking", true);
                 didAttack = true;
                 rb2D.constraints = RigidbodyConstraints2D.FreezePositionX;
                 rb2D.constraints = RigidbodyConstraints2D.FreezeRotation;
+                canAttack = false;
             }
-            else
+            else if (canAttack)
             {
                 animator.SetBool("IsAttacking", true);
                 didAttack = true;
