@@ -4,8 +4,11 @@ using UnityEngine;
 
 public class projectileBehaviour : MonoBehaviour
 {
-    public float speed = 5f;
+    private float speed = 9f;
     public bool isFacingRight = true;
+    private float fireballDamage = 17f;
+    Player2Health a;
+    PlayerHealth b;
 
     private void Update()
     {
@@ -24,8 +27,17 @@ public class projectileBehaviour : MonoBehaviour
     }
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.gameObject.CompareTag("Player") || collision.gameObject.CompareTag("Wall"))
+        if (collision.gameObject.CompareTag("Player") || collision.gameObject.CompareTag("Wall") || collision.gameObject.CompareTag("Projectile"))
         {
+            if (collision.gameObject.CompareTag("Player"))
+            {
+                a = GameObject.FindGameObjectWithTag("Player").GetComponent<Player2Health>();
+                a.Player2TakeDamage(fireballDamage);
+
+                b = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerHealth>();
+                b.PlayerTakeDamage(fireballDamage);
+            }
+
             Destroy(this.gameObject);
         }
     }

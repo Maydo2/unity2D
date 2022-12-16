@@ -27,7 +27,12 @@ public class playerMovement : MonoBehaviour
     public bool didAttack;
     private float animationAttackTimer = 0.4f;
     private bool canAttack;
-    private float downslashforce = 15;
+    private float downslashforce = 15f;
+    private float attackDamage = 12f;
+
+    public Transform attackPoint;
+    public float attackRange = 0.8f;
+    public LayerMask enemyLayers;
 
     // Start is called before the first frame update
     void Start()
@@ -187,6 +192,13 @@ public class playerMovement : MonoBehaviour
                 rb2D.constraints = RigidbodyConstraints2D.FreezePositionX;
                 rb2D.constraints = RigidbodyConstraints2D.FreezeRotation;
                 canAttack = false;
+
+                Collider2D[] hitEnemies = Physics2D.OverlapCircleAll(attackPoint.position, attackRange, enemyLayers);
+
+                foreach (Collider2D player2 in hitEnemies)
+                {
+                    player2.GetComponent<Player2Health>().Player2TakeDamage(attackDamage);
+                }
             }
             else if (canAttack)
             {
@@ -194,8 +206,22 @@ public class playerMovement : MonoBehaviour
                 didAttack = true;
                 rb2D.constraints = RigidbodyConstraints2D.FreezePositionX;
                 rb2D.constraints = RigidbodyConstraints2D.FreezeRotation;
+
+                Collider2D[] hitEnemies = Physics2D.OverlapCircleAll(attackPoint.position, attackRange, enemyLayers);
+
+                foreach (Collider2D player2 in hitEnemies)
+                {
+                    player2.GetComponent<Player2Health>().Player2TakeDamage(attackDamage);
+                }
             }
-            
         }
+    }
+
+    private void OnDrawGizmosSelected()
+    {
+        if (attackPoint == null)
+            return;
+
+        Gizmos.DrawWireSphere(attackPoint.position, attackRange);
     }
 }
