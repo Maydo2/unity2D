@@ -9,9 +9,12 @@ public class projectileBehaviour : MonoBehaviour
     private float fireballDamage = 17f;
     Player2Health a;
     PlayerHealth b;
+    public bool hitPlayer = false;
 
     private void Update()
     {
+        a = GameObject.FindGameObjectWithTag("Player2").GetComponent<Player2Health>();
+        b = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerHealth>();
         if (isFacingRight)
         {
             transform.position -= -transform.right * Time.deltaTime * speed;
@@ -27,17 +30,18 @@ public class projectileBehaviour : MonoBehaviour
     }
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.gameObject.CompareTag("Player") || collision.gameObject.CompareTag("Wall") || collision.gameObject.CompareTag("Projectile"))
+        if (collision.gameObject.CompareTag("Player") || collision.gameObject.CompareTag("Player2") || collision.gameObject.CompareTag("Wall") || collision.gameObject.CompareTag("Projectile"))
         {
+            if (collision.gameObject.CompareTag("Player2"))
+            {
+                a.TakeDamage2(fireballDamage);
+
+            }
             if (collision.gameObject.CompareTag("Player"))
             {
-                a = GameObject.FindGameObjectWithTag("Player").GetComponent<Player2Health>();
-                a.Player2TakeDamage(fireballDamage);
+                b.TakeDamage(fireballDamage);
 
-                b = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerHealth>();
-                b.PlayerTakeDamage(fireballDamage);
             }
-
             Destroy(this.gameObject);
         }
     }

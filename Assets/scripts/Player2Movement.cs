@@ -197,7 +197,7 @@ public class Player2Movement : MonoBehaviour
 
                 foreach (Collider2D player in hitEnemies)
                 {
-                    player.GetComponent<PlayerHealth>().PlayerTakeDamage(attackDamage);
+                    player.GetComponent<PlayerHealth>().TakeDamage(attackDamage);
                 }
             }
             else if (canAttack)
@@ -211,7 +211,7 @@ public class Player2Movement : MonoBehaviour
 
                 foreach (Collider2D player in hitEnemies)
                 {
-                    player.GetComponent<PlayerHealth>().PlayerTakeDamage(attackDamage);
+                    player.GetComponent<PlayerHealth>().TakeDamage(attackDamage);
                 }
             }
         }

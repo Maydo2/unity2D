@@ -13,7 +13,7 @@ public class Player2Health : MonoBehaviour
         currentHealth = maxHealth;    
     }
 
-    public void Player2TakeDamage(float damage)
+    public void TakeDamage2(float damage)
     {
         currentHealth -= damage;
 
@@ -25,6 +25,6 @@ public class Player2Health : MonoBehaviour
 
     void Die()
     {
-        SceneManager.LoadScene(2);
+        SceneManager.LoadScene(0);
     }
 }
