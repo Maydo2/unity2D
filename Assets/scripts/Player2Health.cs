@@ -6,11 +6,11 @@ using UnityEngine.SceneManagement;
 public class Player2Health : MonoBehaviour
 {
     public float maxHealth = 100;
-    float currentHealth;
+    public float currentHealth;
 
     void Start()
     {
-        currentHealth = maxHealth;    
+        currentHealth = maxHealth;
     }
 
     public void TakeDamage2(float damage)
