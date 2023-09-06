@@ -11,10 +11,14 @@ public class projectileBehaviour : MonoBehaviour
     PlayerHealth b;
     public bool hitPlayer = false;
 
-    private void Update()
+    private void Start()
     {
         a = GameObject.FindGameObjectWithTag("Player2").GetComponent<Player2Health>();
         b = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerHealth>();
+    }
+
+    private void Update()
+    {
         if (isFacingRight)
         {
             transform.position -= -transform.right * Time.deltaTime * speed;
